@@ -28,7 +28,7 @@ It performs quality control, removes host reads, profiles microbial taxa, and su
 | 5. Taxonomic profiling | MetaPhlAn | Read based classification from PE reads |
 
 ## snakemake simplified DAG (rulegraph)
-![graphviz (2)](https://hackmd.io/_uploads/B1sZFNNaxx.svg)
+![main](pipeline_DAG.png)
 
 
 ---
