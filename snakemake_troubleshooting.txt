@@ -1,0 +1,28 @@
+# troubleshooting tips for snakemake / helpful features
+# assuming you are in the snakemake_env with snakemake loaded
+
+tail -f logs/snakemake_controller_%j
+cat logs/snakemake_controller_%j
+
+# rule #1.... always check the tail of the log file!!! they are very useful, it is usually easy to deduce the source of the error from the log file
+
+snakemake -s scripts/Snakefile.py -n
+
+# ALWAYS run this before starting a job
+# tells you: number of jobs required, informs you of errors in your script
+
+snakemake -s scripts/Snakefile.py --rerun-triggers mtime -n 
+
+# --rerun-triggers mtime will exclude jobs where outputs already exist, but have different metadata
+# snakemake tracks sample metadata. if a snakefile errors out before running all samples and you try and re run the snakefile at a later date, sometimes the metadata will not match, usually due to the conda environments being re-built
+# if you are confident that although the metadata doesn't match, the outputs are fine, add this flag to your sbatch file to avoid re-running jobs unnecessarily
+
+snakemake -s scripts/Snakefile.py --rulegraph 
+
+# paste output into Graphviz online to generate simplified rulegraph. I find this easier than trying to convert to a .png on an HPC
+# https://dreampuf.github.io/GraphvizOnline/
+
+snakemake -s scripts/Snakefile.py --dag
+
+# generates a more complex DAG that includes every sample. This gets very messy if you have many samples, but it is useful to run this in a directory with a subset of fastq_files to visualize how the jobs are parallelized
+# paste output to https://dreampuf.github.io/GraphvizOnline/ to generate an image
