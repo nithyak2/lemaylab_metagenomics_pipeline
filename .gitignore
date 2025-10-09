@@ -1,0 +1,11 @@
+# Ignore raw data
+fastq_files/
+
+# Ignore local or custom config files
+config/config_lemaylab.yaml
+
+# Ignore README (you’ll push a different one later or keep HackMD version)
+README.md
+
+# Ignore sample_sheet.txt
+sample_sheet.txt
