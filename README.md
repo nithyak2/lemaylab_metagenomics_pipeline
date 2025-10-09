@@ -28,7 +28,7 @@ It performs quality control, removes host reads, profiles microbial taxa, and su
 | 5. Taxonomic profiling | MetaPhlAn | Read based classification from PE reads |
 
 ## snakemake simplified DAG (rulegraph)
-![main](pipeline_DAG.png)
+![graphviz (2)](https://hackmd.io/_uploads/B1sZFNNaxx.svg)
 
 
 ---
@@ -48,7 +48,7 @@ cd metagenomics-pipeline
 cd /path/to/project_root
 ```
  
-2. Copy config/config.yaml and edit paths for your system
+2. Copy config/config.yaml and edit paths for your system. **This should be the only file you need to edit, you should not need to edit the Snakefile**
 
 3. Create sample sheet (sample_sheet.txt) with columns: sample_name, r1_path, r2_path
 ```bash
