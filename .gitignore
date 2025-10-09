@@ -4,8 +4,9 @@ fastq_files/
 # Ignore local or custom config files
 config/config_lemaylab.yaml
 
-# Ignore README (you’ll push a different one later or keep HackMD version)
-README.md
-
 # Ignore sample_sheet.txt
 sample_sheet.txt
+
+# Ignore Jupyter checkpoint files
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
