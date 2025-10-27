@@ -10,3 +10,5 @@ sample_sheet.txt
 # Ignore Jupyter checkpoint files
 .ipynb_checkpoints/
 **/.ipynb_checkpoints/
+__pycache__/
+*.pyc
