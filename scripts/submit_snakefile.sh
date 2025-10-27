@@ -3,15 +3,17 @@
 #SBATCH --time=48:00:00
 #SBATCH --mem=4G
 #SBATCH --output=logs/snakemake_controller_%j.out
-#SBATCH --partition=low
+#SBATCH --partition=high
+#SBATCH --account=ACCOUNTNAME
 
 #run this scripts in running directory (usually one directory above /scripts)
 
 source ~/.bashrc
 conda activate snakemake_env
 
-# use-envmodules is needed since I have some programs as modules, not in a conda environment
-# we should move away from this approach soon, and load everything into conda environments 
+# low partition recommended for snakemake command. 
+# run this snakemake controller script on high partitiona with #SBATCH so that the controller doesn't get kicked off. 
+# if the controller stops, the whole Snakefile stops. 
 snakemake -s scripts/Snakefile_step1_3_FINAL.py \
     --executor slurm \
     --jobs 20 \
