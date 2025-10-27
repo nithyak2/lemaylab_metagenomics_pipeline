@@ -54,17 +54,20 @@ cd /path/to/project_root
 ```bash
 # To auto-generate from fastq_files directory, run:
 # edit this based on your file names 
-echo -e "sample_name\tr1_path\tr2_path" > sample_sheet.txt
+# Create the sample sheet from your existing files
+ echo -e "sample_name\tlong_sample\tr1_path\tr2_path" > sample_sheet.txt
  for r1 in fastq_files/*_R1_001.fastq.gz; do
      r2="${r1/_R1_/_R2_}"
      sample=$(basename "$r1" | sed 's/_S[0-9]*_L[0-9]*_R1_001.fastq.gz//')
-     echo -e "${sample}\t${r1}\t${r2}" >> sample_sheet.txt
+     long_sample=$(basename "$r1" | sed 's/_R1_001.fastq.gz//')
+     echo -e "${sample}\t${long_sample}\t${r1}\t${r2}" >> sample_sheet.txt
  done
+ 
 # Example output:
 # Tab-separated file with these columns:
-# sample_name	r1_path	r2_path
-# 109_C1_E	fastq_files/109_C1_E_S18_L006_R1_001.fastq.gz	fastq_files/109_C1_E_S18_L006_R2_001.fastq.gz
-# 109_C1_N	fastq_files/109_C1_N_S66_L006_R1_001.fastq.gz	fastq_files/109_C1_N_S66_L006_R2_001.fastq.gz
+# sample_name	long_sample	r1_path	r2_path
+# 109_C1_E	109_C1_E_S18_L006	fastq_files/109_C1_E_S18_L006_R1_001.fastq.gz	fastq_files/109_C1_E_S18_L006_R2_001.fastq.gz
+# 109_C1_N	109_C1_N_S66_L006	fastq_files/109_C1_N_S66_L006_R1_001.fastq.gz	fastq_files/109_C1_N_S66_L006_R2_001.fastq.gz
 ```
 
 4. Get required files from MetaPhlAn github (this may need to be updated if databases change)
