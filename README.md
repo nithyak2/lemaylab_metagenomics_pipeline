@@ -69,6 +69,7 @@ cd /path/to/project_root
 # 109_C1_E	109_C1_E_S18_L006	fastq_files/109_C1_E_S18_L006_R1_001.fastq.gz	fastq_files/109_C1_E_S18_L006_R2_001.fastq.gz
 # 109_C1_N	109_C1_N_S66_L006	fastq_files/109_C1_N_S66_L006_R1_001.fastq.gz	fastq_files/109_C1_N_S66_L006_R2_001.fastq.gz
 ```
+Note: The "long_sample" column is required for the fastqc rule. If your raw fastq files do not have these added characters, you can simply make the long_sample column identical to the sample_name column. This is a quick fix so you don't need to modify the variable calls in downstream rules. 
 
 4. Get required files from MetaPhlAn github (this may need to be updated if databases change)
 ```bash
