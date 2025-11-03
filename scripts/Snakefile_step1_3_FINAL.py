@@ -132,7 +132,6 @@ rule all:
     input:
         # This will trigger the entire fastp pipeline
         expand("step2_fastp/merged/{sample}.merged.fastq.gz", sample=SAMPLES),
-        
         # This will trigger fastqc + multiqc
         "fastqc_summary/multiqc_report.html",
         
@@ -157,15 +156,16 @@ rule fastqc:
         zipped1="fastqc_output/{long_samples}_R1_001_fastqc.zip",
         html2="fastqc_output/{long_samples}_R2_001_fastqc.html",
         zipped2="fastqc_output/{long_samples}_R2_001_fastqc.zip"
-    threads: config["resources"]["fastqc"]["threads"]
+    #threads: config["resources"]["fastqc"]["threads"]
     resources:
         mem_mb=config["resources"]["fastqc"]["mem_gb"]*GB,
-        runtime=config["resources"]["fastqc"]["runtime_min"]
+        runtime=config["resources"]["fastqc"]["runtime_min"],
+        threads=config["resources"]["fastqc"]["threads"]
     conda:
         config["conda_envs"]["fastqc_multiqc"]
     shell:
         """ 
-        fastqc -o fastqc_output -f fastq -t 2 {input.r1} {input.r2}
+        fastqc -o fastqc_output -f fastq -t {resources.threads} {input.r1} {input.r2}
         """
 
 ########################################
@@ -184,11 +184,11 @@ rule multiqc:
         multiqc fastqc_output -o fastqc_summary
         """
 
-########################################
+#######################################
 # Step 1: Remove human reads
 # run bowtie2-build command if needed, only need to run once
 # Example: bowtie2-build /path/to/human_genome.fna /path/to/human_genome
-########################################
+#######################################
 rule remove_human:
     input:
         r1=lambda wildcards: SAMPLE_R1[wildcards.sample],
@@ -198,19 +198,20 @@ rule remove_human:
         pe2="step1_bowtie2/{sample}_nohuman_pe.2.fastq",
         se="step1_bowtie2/{sample}_nohuman_se.fastq",
         stats="step1_bowtie2/{sample}_alignment_stats.txt"
-    threads: config["resources"]["bowtie2"]["threads"]
+    #threads: config["resources"]["bowtie2"]["threads"]
     params:
         index=config["databases"]["human_genome"],
         basename="step1_bowtie2/{sample}_nohuman_pe.fastq"
     resources:
         mem_mb=config["resources"]["bowtie2"]["mem_gb"]*GB,
-        runtime=config["resources"]["bowtie2"]["runtime_min"]
+        runtime=config["resources"]["bowtie2"]["runtime_min"],
+        threads=config["resources"]["bowtie2"]["threads"]
     conda:
         config["conda_envs"]["bowtie"]
     shell:
         """
         # run bowtie2
-        bowtie2 -q -p {threads} -x {params.index} \
+        bowtie2 -q -p {resources.threads} -x {params.index} \
             -1 {input.r1} -2 {input.r2} \
             --un-conc {params.basename} \
             --un {output.se} \
@@ -303,14 +304,15 @@ rule trim_quality:
         quality_phred=config["fastp_params"]["trim"]["quality_phred"]
     conda:
         config["conda_envs"]["fastp"]
-    threads: config["resources"]["fastp_trim"]["threads"]
+    #threads: config["resources"]["fastp_trim"]["threads"]
     resources:
         mem_mb=config["resources"]["fastp_trim"]["mem_gb"]*GB,
-        runtime=config["resources"]["fastp_trim"]["runtime_min"]
+        runtime=config["resources"]["fastp_trim"]["runtime_min"],
+        threads=config["resources"]["fastp_trim"]["threads"]
     shell:
         """
         fastp --in1 {input.pe1} --in2 {input.pe2} \
-            --thread {threads} --detect_adapter_for_pe \
+            --thread {resources.threads} --detect_adapter_for_pe \
             --trim_poly_g --dedup \
             --length_required {params.min_length} \
             --qualified_quality_phred {params.quality_phred} \
@@ -340,12 +342,13 @@ rule merge_reads:
         config["conda_envs"]["fastp"]
     resources:
         mem_mb=config["resources"]["fastp_merge"]["mem_gb"]*GB,
-        runtime=config["resources"]["fastp_merge"]["runtime_min"]
-    threads: config["resources"]["fastp_merge"]["threads"]
+        runtime=config["resources"]["fastp_merge"]["runtime_min"],
+        threads=config["resources"]["fastp_merge"]["threads"]
+    #threads: config["resources"]["fastp_merge"]["threads"]
     shell:
         """
         fastp --in1 {input.r1} --in2 {input.r2} \
-        --thread {threads} \
+        --thread {resources.threads} \
         --merge \
         --merged_out {output.merged} \
         --out1 {output.um1} --out2 {output.um2} \
@@ -435,15 +438,16 @@ rule metaphlan:
         index=config["databases"]["metaphlan_index"]
     conda:
         config["conda_envs"]["metaphlan"]
-    threads: config["resources"]["metaphlan"]["threads"]
+    #threads: config["resources"]["metaphlan"]["threads"]
     resources:
         mem_mb=config["resources"]["metaphlan"]["mem_gb"]*GB,
-        runtime=config["resources"]["metaphlan"]["runtime_min"]
+        runtime=config["resources"]["metaphlan"]["runtime_min"],
+        threads=config["resources"]["metaphlan"]["threads"]
     shell:
         """
         metaphlan {input.r1},{input.r2} --input_type fastq \
         --db_dir {params.db_dir} \
-        --nproc {threads} \
+        --nproc {resources.threads} \
         --index {params.index} \
         --mapout {output.bt} -s {output.sams} \
         -o {output.profile} --verbose --offline 

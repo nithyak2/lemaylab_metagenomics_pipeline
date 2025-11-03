@@ -26,3 +26,14 @@ snakemake -s scripts/Snakefile.py --dag
 
 # generates a more complex DAG that includes every sample. This gets very messy if you have many samples, but it is useful to run this in a directory with a subset of fastq_files to visualize how the jobs are parallelized
 # paste output to https://dreampuf.github.io/GraphvizOnline/ to generate an image
+
+################ Notes on sbatch scripts/submit_snakefile.sh
+snakemake -s scripts/Snakefile_step1_3_FINAL.py \
+    --executor slurm \
+    --jobs 20 \
+    --use-conda \
+    --rerun-incomplete \
+    --printshellcmds \
+    --default-resources mem_mb=4096 runtime=600 slurm_partition=low
+
+# the snakemake command is sensitive to spaces! You cannot have any comments or spaces after the backlashes  
